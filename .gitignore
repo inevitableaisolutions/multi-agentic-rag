@@ -40,3 +40,5 @@ Thumbs.db
 # GCP credentials (NEVER commit)
 *credentials*.json
 *service-account*.json
+server.log
+*.log
