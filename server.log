@@ -1,0 +1,49 @@
+/Users/tharunkshathriya/Desktop/AI & Automation/Automation Projects/Mutlti Agent System GCP/main.py:41: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")
+INFO:     Started server process [68200]
+INFO:     Waiting for application startup.
+/Users/tharunkshathriya/Desktop/AI & Automation/Automation Projects/Mutlti Agent System GCP/.venv/lib/python3.13/site-packages/vertexai/_model_garden/_model_garden_models.py:278: UserWarning: This feature is deprecated as of June 24, 2025 and will be removed on June 24, 2026. For details, see https://cloud.google.com/vertex-ai/generative-ai/docs/deprecations/genai-vertexai-sdk.
+  warning_logs.show_deprecation_warning()
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+[startup] Building FAISS index and BM25 index...
+[startup] FAISS index built: 49 vectors, 49 docs (7.8s)
+[startup] BM25 index built (7.8s)
+[startup] ADK Runner ready (7.8s)
+[startup] Semantic cache ready
+[startup] All systems go! Total startup: 7.8s
+INFO:     127.0.0.1:57718 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57719 - "POST /api/query HTTP/1.1" 200 OK
+Warning: there are non-text parts in the response: ['function_call'], returning concatenated text result from text parts. Check the full candidates.content.parts accessor to get the full model response.
+INFO:     127.0.0.1:57724 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57747 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57811 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57811 - "GET /static/styles.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57812 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57826 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57853 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57885 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57902 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57922 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57959 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57994 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58008 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58154 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58154 - "GET /static/styles.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58155 - "GET /static/app.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58163 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58210 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58334 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58334 - "GET /static/styles.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58335 - "GET /static/app.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:58341 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58354 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58399 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58404 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58432 - "POST /api/query HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58461 - "POST /api/query HTTP/1.1" 200 OK

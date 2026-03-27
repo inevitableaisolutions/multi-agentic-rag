@@ -1,0 +1,122 @@
+[
+  {
+    "query": "How do I reset my password?",
+    "expected_intent": "account",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["password_reset"]
+  },
+  {
+    "query": "I've been charged twice this month and I want a refund NOW!",
+    "expected_intent": "billing",
+    "expected_sentiment": "frustrated",
+    "expected_docs": ["disputes", "refund_policy"]
+  },
+  {
+    "query": "How do I integrate CloudSync Pro with Slack?",
+    "expected_intent": "technical",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["integrations"]
+  },
+  {
+    "query": "What are the different subscription plans and pricing?",
+    "expected_intent": "billing",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["subscription_plans"]
+  },
+  {
+    "query": "My API keeps returning a 401 error. I've tried everything!",
+    "expected_intent": "technical",
+    "expected_sentiment": "frustrated",
+    "expected_docs": ["api_errors"]
+  },
+  {
+    "query": "I want to delete my account and all my data permanently.",
+    "expected_intent": "account",
+    "expected_sentiment": "negative",
+    "expected_docs": ["deletion", "privacy"]
+  },
+  {
+    "query": "The app is loading really slowly today. What's going on?",
+    "expected_intent": "technical",
+    "expected_sentiment": "negative",
+    "expected_docs": ["performance"]
+  },
+  {
+    "query": "How do I set up two-factor authentication?",
+    "expected_intent": "account",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["two_factor_auth"]
+  },
+  {
+    "query": "Can I export my project data to CSV format?",
+    "expected_intent": "technical",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["data_export"]
+  },
+  {
+    "query": "What features are coming in the next release?",
+    "expected_intent": "general",
+    "expected_sentiment": "positive",
+    "expected_docs": ["roadmap"]
+  },
+  {
+    "query": "My payment failed and now I can't access premium features",
+    "expected_intent": "billing",
+    "expected_sentiment": "frustrated",
+    "expected_docs": ["payment_methods", "subscription_plans"]
+  },
+  {
+    "query": "How do I give admin access to my team member?",
+    "expected_intent": "account",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["permissions"]
+  },
+  {
+    "query": "Is CloudSync Pro GDPR compliant? We need a DPA.",
+    "expected_intent": "account",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["privacy"]
+  },
+  {
+    "query": "The mobile app won't sync my changes. Push notifications aren't working either.",
+    "expected_intent": "technical",
+    "expected_sentiment": "negative",
+    "expected_docs": ["mobile_app"]
+  },
+  {
+    "query": "I love the new dashboard! What else is CloudSync Pro used for?",
+    "expected_intent": "general",
+    "expected_sentiment": "positive",
+    "expected_docs": ["product_overview"]
+  },
+  {
+    "query": "How do I access my invoices for tax purposes?",
+    "expected_intent": "billing",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["invoices"]
+  },
+  {
+    "query": "Our VPN is blocking CloudSync. What ports do I need to open?",
+    "expected_intent": "technical",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["connectivity_issues"]
+  },
+  {
+    "query": "What's your uptime guarantee and SLA?",
+    "expected_intent": "general",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["sla"]
+  },
+  {
+    "query": "I need to connect with a human agent urgently. My account may be compromised.",
+    "expected_intent": "account",
+    "expected_sentiment": "frustrated",
+    "expected_docs": ["contact", "password_reset"]
+  },
+  {
+    "query": "Which browsers does CloudSync Pro support?",
+    "expected_intent": "technical",
+    "expected_sentiment": "neutral",
+    "expected_docs": ["browser_compatibility"]
+  }
+]

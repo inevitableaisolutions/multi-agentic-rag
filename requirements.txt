@@ -1,0 +1,37 @@
+# Google ADK — Agent framework
+google-adk
+
+# Google Cloud — Vertex AI (Gemini, Embeddings)
+google-cloud-aiplatform
+
+# Google Cloud — BigQuery (Analytics)
+google-cloud-bigquery
+
+# Google Cloud — Discovery Engine (Ranking API)
+google-cloud-discoveryengine
+
+# Vector search
+faiss-cpu
+
+# Sparse retrieval (BM25)
+rank-bm25
+
+# Configuration management
+pydantic-settings
+python-dotenv
+
+# CLI formatting for demo
+rich
+
+# ASGI server for Cloud Run
+uvicorn
+
+# Web framework (used by ADK internally, also for Cloud Run)
+fastapi
+
+# Document parsing — multi-format ingestion
+pymupdf          # PDF (text, tables, images)
+python-docx      # Word documents (.docx)
+pandas           # DataFrames for Excel/CSV tables
+openpyxl         # Excel .xlsx reader
+pillow           # Image processing

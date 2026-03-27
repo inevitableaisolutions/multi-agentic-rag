@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSI — Customer Support Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Ambient background -->
+    <div class="ambient-glow"></div>
+
+    <!-- Top bar -->
+    <header class="topbar">
+        <div class="topbar-brand">
+            <div class="brand-mark">
+                <div class="brand-rings">
+                    <span></span><span></span><span></span>
+                </div>
+                <span class="brand-text">CSI</span>
+            </div>
+            <div class="brand-divider"></div>
+            <span class="brand-full">Customer Support Intelligence</span>
+        </div>
+        <div class="topbar-status">
+            <div class="status-pill active">
+                <span class="status-beacon"></span>
+                <span>Operational</span>
+            </div>
+            <div class="tech-tags">
+                <span class="tag">Google ADK</span>
+                <span class="tag">Gemini 2.5</span>
+                <span class="tag">Vertex AI</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main grid -->
+    <main class="workspace">
+
+        <!-- ─── Chat ─── -->
+        <section class="panel chat-panel">
+            <div class="panel-chrome">
+                <div class="panel-title">
+                    <span class="panel-dot green"></span>
+                    Conversation
+                </div>
+                <button class="icon-btn" onclick="clearChat()" title="Clear">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                </button>
+            </div>
+
+            <div class="chat-scroll" id="chatMessages">
+                <div class="welcome">
+                    <div class="welcome-sigil">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <circle cx="24" cy="24" r="22" stroke="url(#wg)" stroke-width="1.5" opacity="0.5"/>
+                            <circle cx="24" cy="24" r="14" stroke="url(#wg)" stroke-width="1"/>
+                            <circle cx="24" cy="24" r="4" fill="url(#wg)"/>
+                            <defs><linearGradient id="wg" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#34d399"/><stop offset="1" stop-color="#3b82f6"/></linearGradient></defs>
+                        </svg>
+                    </div>
+                    <h2>Agentic RAG Pipeline</h2>
+                    <p>Production-grade multi-agent system with guardrails, hybrid retrieval, and real-time evaluation.</p>
+                    <div class="flow-strip">
+                        <span class="flow-node">Guardrails</span>
+                        <span class="flow-arrow">&rarr;</span>
+                        <span class="flow-node">Cache</span>
+                        <span class="flow-arrow">&rarr;</span>
+                        <span class="flow-node">3 Agents</span>
+                        <span class="flow-arrow">&rarr;</span>
+                        <span class="flow-node accent">Response</span>
+                    </div>
+                    <div class="example-grid">
+                        <button class="example" onclick="sendExample(this)">How do I reset my password?</button>
+                        <button class="example" onclick="sendExample(this)">I've been charged twice!</button>
+                        <button class="example" onclick="sendExample(this)">Integrate with Slack</button>
+                        <button class="example" onclick="sendExample(this)">API returns 401 error</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="composer">
+                <input type="text" id="chatInput" placeholder="Ask a support question..."
+                       onkeydown="if(event.key==='Enter')sendMessage()" autocomplete="off">
+                <button class="send-btn" onclick="sendMessage()" id="sendBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- ─── Pipeline ─── -->
+        <section class="panel pipeline-panel">
+            <div class="panel-chrome">
+                <div class="panel-title">
+                    <span class="panel-dot blue"></span>
+                    Pipeline Monitor
+                </div>
+                <div class="latency-chip" id="latencyDisplay">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>--</span>
+                </div>
+            </div>
+
+            <div class="pipeline-scroll">
+                <!-- Guardrails -->
+                <div class="stage" id="stage-guardrails">
+                    <div class="stage-head">
+                        <div class="stage-badge shield">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <span class="stage-label">Input Guardrails</span>
+                        <span class="stage-tag" id="status-guardrails">Idle</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="kv"><span>PII</span><span id="gr-pii" class="val">--</span></div>
+                        <div class="kv"><span>Injection</span><span id="gr-injection" class="val">--</span></div>
+                        <div class="kv"><span>Topic</span><span id="gr-topic" class="val">--</span></div>
+                    </div>
+                </div>
+
+                <div class="connector"><div class="connector-track"><div class="connector-fill"></div></div></div>
+
+                <!-- Cache -->
+                <div class="stage" id="stage-cache">
+                    <div class="stage-head">
+                        <div class="stage-badge cache">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12H2"/><path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>
+                        </div>
+                        <span class="stage-label">Semantic Cache</span>
+                        <span class="stage-tag" id="status-cache">Idle</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="kv"><span>Status</span><span id="cache-result" class="val">--</span></div>
+                    </div>
+                </div>
+
+                <div class="connector"><div class="connector-track"><div class="connector-fill"></div></div></div>
+
+                <!-- Agent 1 -->
+                <div class="stage" id="stage-agent1">
+                    <div class="stage-head">
+                        <div class="stage-badge agent">1</div>
+                        <span class="stage-label">Query Processing</span>
+                        <span class="stage-tag" id="status-agent1">Idle</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="kv"><span>Intent</span><span id="a1-intent" class="val">--</span></div>
+                        <div class="kv"><span>Sentiment</span><span id="a1-sentiment" class="val">--</span></div>
+                        <div class="kv"><span>Urgency</span><span id="a1-urgency" class="val">--</span></div>
+                    </div>
+                </div>
+
+                <div class="connector"><div class="connector-track"><div class="connector-fill"></div></div></div>
+
+                <!-- Agent 2 -->
+                <div class="stage" id="stage-agent2">
+                    <div class="stage-head">
+                        <div class="stage-badge agent">2</div>
+                        <span class="stage-label">Retrieval &amp; Generation</span>
+                        <span class="stage-tag" id="status-agent2">Idle</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="kv"><span>Docs</span><span id="a2-docs" class="val">--</span></div>
+                        <div class="kv"><span>Method</span><span id="a2-search" class="val mono">Dense + BM25 + RRF</span></div>
+                    </div>
+                </div>
+
+                <div class="connector"><div class="connector-track"><div class="connector-fill"></div></div></div>
+
+                <!-- Agent 3 -->
+                <div class="stage" id="stage-agent3">
+                    <div class="stage-head">
+                        <div class="stage-badge agent eval">3</div>
+                        <span class="stage-label">Evaluation</span>
+                        <span class="stage-tag" id="status-agent3">Idle</span>
+                    </div>
+                    <div class="stage-body">
+                        <div class="kv"><span>Faithfulness</span><span id="a3-faith" class="val">--</span></div>
+                        <div class="kv"><span>Relevance</span><span id="a3-relevance" class="val">--</span></div>
+                        <div class="kv"><span>Decision</span><span id="a3-decision" class="val">--</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics -->
+            <div class="metrics">
+                <div class="metric-card">
+                    <span class="metric-num" id="metric-queries">0</span>
+                    <span class="metric-lbl">Queries</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-num" id="metric-score">--</span>
+                    <span class="metric-lbl">Avg Score</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-num" id="metric-cache">0%</span>
+                    <span class="metric-lbl">Cache Hit</span>
+                </div>
+                <div class="metric-card">
+                    <span class="metric-num" id="metric-approved">--</span>
+                    <span class="metric-lbl">Approved</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
