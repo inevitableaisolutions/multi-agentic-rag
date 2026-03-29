@@ -45,10 +45,10 @@ Customer Query
      |   -> "Write me a Python script" -> BLOCKED, returns redirect message
      |
      v
-[2] SEMANTIC CACHE (FAISS-based, similarity threshold 0.95)
-     |-- Embeds query with gemini-embedding-001 (768 dims)
+[2] SEMANTIC CACHE (FAISS-based, similarity threshold 0.70)
+     |-- Embeds query with gemini-embedding-001 (3072 dims)
      |-- Cosine similarity search against cached queries
-     |-- If hit (>= 0.95): return cached response instantly, skip all agents
+     |-- If hit (>= 0.70): return cached response instantly, skip all agents
      |-- If miss: proceed to agents
      |-- LRU eviction, 1-hour TTL, max 1000 entries
      |
@@ -215,7 +215,7 @@ DeepEval "hallucination" metric:
 | **Agent Framework** | Google ADK | Job requirement, native GCP, simple for sequential pipeline | LangGraph, CrewAI, AutoGen, Semantic Kernel | LangGraph is better for complex graphs; CrewAI/AutoGen are role-play focused |
 | **Orchestration** | SequentialAgent | Deterministic, zero-overhead routing | LLM delegation, ParallelAgent | Routing adds latency + non-determinism for linear flow |
 | **LLM** | Gemini 2.5 Flash | Fast (~500-800ms), cheap ($0.10/1M input), sufficient quality | Gemini 2.5 Pro, Claude, GPT-4o | 2.5 Pro is smarter but slower/costlier; others break Google ecosystem |
-| **Embeddings** | gemini-embedding-001 (768d) | Best Google embedding model, good balance of quality vs. compute | text-embedding-005, multilingual-e5, OpenAI ada-002 | text-embedding-005 is older; open models need self-hosting |
+| **Embeddings** | gemini-embedding-001 (3072d) | Best Google embedding model, good balance of quality vs. compute | text-embedding-005, multilingual-e5, OpenAI ada-002 | text-embedding-005 is older; open models need self-hosting |
 | **Dense Search** | FAISS (faiss-cpu, IndexFlatIP) | Free, local, instant for <100K chunks | Vertex AI Vector Search, Pinecone, Weaviate | Vertex AI = $68.50/mo minimum; Pinecone/Weaviate = non-GCP |
 | **Sparse Search** | rank_bm25 (Python) | Standard keyword matching, catches exact terms dense misses | Elasticsearch, SPLADE | ES is overkill for this scale; SPLADE adds complexity for marginal gain |
 | **Hybrid Merge** | Reciprocal Rank Fusion (k=60) | Parameter-free, proven in research, fair weighting | Linear combination, convex combination | Linear/convex require tuning weights |
@@ -226,7 +226,7 @@ DeepEval "hallucination" metric:
 | **Session State** | ADK tool_context.state | Built into ADK, shared across agents in a session | Redis, Firestore, custom | ADK state is sufficient for single-session flow |
 | **Evaluation** | LLM-as-Judge (custom Gemini prompts) | Real-time, zero deps, one call for all metrics, CX-specific | RAGAS, DeepEval, Vertex AI Gen AI Eval | RAGAS/DeepEval are batch, multi-call, generic |
 | **Guardrails** | Regex PII + regex injection + regex topic | Lightweight, no extra deps, customizable | NVIDIA NeMo Guardrails, Cloud DLP API, Guardrails AI | NeMo adds weight; Cloud DLP for enterprise upgrade path |
-| **Cache** | FAISS semantic cache (0.95 threshold, LRU, 1hr TTL) | 40-60% cost savings, free, local | Redis/Memorystore (exact match), GPTCache | Exact match misses paraphrases; GPTCache is extra dep |
+| **Cache** | FAISS semantic cache (0.70 threshold, LRU, 1hr TTL) | 40-60% cost savings, free, local | Redis/Memorystore (exact match), GPTCache | Exact match misses paraphrases; GPTCache is extra dep |
 
 ---
 
@@ -303,7 +303,7 @@ Customer (Phone/Chat/Email)
 
 ### Q1: Walk me through what happens when a customer sends a message.
 
-**Answer:** "Three phases. First, pre-processing: the query hits guardrails -- regex-based PII redaction strips out SSNs, credit cards, phone numbers, emails, and IPs. Prompt injection detection checks against 14 known patterns. Topic boundary enforcement ensures we're talking about customer support, not writing code or giving medical advice. Second, the semantic cache embeds the query and checks FAISS for a similar query answered within the last hour -- if similarity is above 0.95, we return the cached response instantly and skip everything else.
+**Answer:** "Three phases. First, pre-processing: the query hits guardrails -- regex-based PII redaction strips out SSNs, credit cards, phone numbers, emails, and IPs. Prompt injection detection checks against 14 known patterns. Topic boundary enforcement ensures we're talking about customer support, not writing code or giving medical advice. Second, the semantic cache embeds the query and checks FAISS for a similar query answered within the last hour -- if similarity is above 0.70, we return the cached response instantly and skip everything else.
 
 Third, the three-agent pipeline. Agent 1 classifies intent, sentiment, urgency, rewrites the query into 2-3 clearer search queries, expands with synonyms, and generates a hypothetical answer for HyDE. Agent 2 takes those queries and runs hybrid retrieval -- FAISS dense search plus BM25 sparse search -- merges results with Reciprocal Rank Fusion, optionally filters by intent, sends the top 15 candidates to Vertex AI's reranker, and generates a grounded response from the top 5 documents. Agent 3 evaluates the response on 8 metrics -- faithfulness, answer relevance, context relevance, hallucination, bias, toxicity, tone, and PII leakage -- then decides approve, revise, or escalate. Everything gets logged to BigQuery."
 
@@ -448,13 +448,13 @@ All of this data is already being logged to BigQuery by Agent 3. The dashboard i
 - Parent-child (small chunks for retrieval, return parent for context): more complex, better for long documents
 - Document AI layout parser: adds cost, better for PDFs with complex layouts
 
-### Embedding Dimensions (768)
+### Embedding Dimensions (3072)
 
-**Model:** gemini-embedding-001 supports up to 3072 dimensions. We use 768.
+**Model:** gemini-embedding-001 supports up to 3072 dimensions. We use 3072 (full resolution).
 
-**Why 768:** Good balance of quality and compute. At our data volume (<100K chunks), 768d gives strong retrieval quality. FAISS memory: 768 * 4 bytes * 100K docs = ~300MB. At 3072d that's ~1.2GB.
+**Why 3072:** Maximum retrieval precision. At our data volume (<100K chunks), the memory cost is acceptable: 3072 * 4 bytes * 100K docs = ~1.2GB. The quality improvement from full resolution is significant for distinguishing similar knowledge base articles (e.g., "password reset" vs. "2FA recovery").
 
-**When to use 3072:** High-precision retrieval where you need to distinguish very similar documents. Multilingual scenarios where more dimensions help.
+**When to use 768:** Large-scale deployments (millions of docs) where memory and compute cost matters more than marginal quality gain.
 
 ### Vertex AI Ranking API
 
@@ -526,7 +526,7 @@ SYSTEM FLOW:
   -> Agent 2 (retrieve+generate) -> Agent 3 (evaluate) -> BigQuery + Response
 
 TECH STACK:
-  ADK SequentialAgent | Gemini 2.5 Flash | gemini-embedding-001 (768d)
+  ADK SequentialAgent | Gemini 2.5 Flash | gemini-embedding-001 (3072d)
   FAISS + BM25 + RRF + Vertex AI Reranker | BigQuery | Cloud Run
 
 3 AGENTS:
@@ -535,12 +535,65 @@ TECH STACK:
   Agent 3: Evaluation (temp=0.1) - 8 metrics, approve/revise/escalate
 
 KEY NUMBERS:
-  Cache hit rate: 40-60% | Cache threshold: 0.95 | Chunks: 512 tokens
-  RRF k=60 | Top-K: 5 | Rerank candidates: 15 | Embedding dims: 768
+  Cache hit rate: 40-60% | Cache threshold: 0.70 | Chunks: 512 tokens
+  RRF k=60 | Top-K: 5 | Rerank candidates: 15 | Embedding dims: 3072
 
 WHY ADK: Job asks for it, native GCP, simpler for sequential
 WHY 3 AGENTS: Separation of concerns, different temps, failure isolation
 WHY CUSTOM EVAL: Real-time, one call, zero deps, CX-specific
+```
+
+---
+
+---
+
+## 10. Live Deployment & Links
+
+| Resource | URL |
+|----------|-----|
+| **Live Demo** | https://multi-agentic-rag-zvgquhg7ta-uc.a.run.app |
+| **GitHub Repo** | https://github.com/inevitableaisolutions/multi-agentic-rag |
+| **GCP Project** | `multi-agent-support-gcp` (Google Cloud Console) |
+| **BigQuery Analytics** | `support_analytics.interactions` table in BigQuery Console |
+
+### GCP Services Used
+
+| Service | What It Does In Our System |
+|---------|---------------------------|
+| **Vertex AI (Model Garden)** | Gemini 2.5 Flash (LLM for all 3 agents) + gemini-embedding-001 (3072d embeddings) |
+| **Discovery Engine API** | Vertex AI Ranking API (semantic-ranker-default-004) for reranking |
+| **Cloud Run** | Hosts the FastAPI app + custom dashboard, auto-scales 0→3 instances |
+| **BigQuery** | Logs every interaction: query, intent, sentiment, eval scores, decision |
+| **Cloud Build** | Builds Docker image from source during deployment |
+| **Artifact Registry** | Stores the built Docker image |
+| **Cloud Logging** | Automatic logs from Cloud Run |
+
+### What We DON'T Use (and Why)
+
+| Service | Why Not |
+|---------|---------|
+| **Vertex AI Vector Search** | $68.50/mo minimum. FAISS is free and sufficient at our scale. |
+| **Vertex AI Agent Builder** | We use ADK (open source) for more control. |
+| **Dialogflow CX** | That's what GTS uses for production chatbots (OmniBot). Our system could sit behind it. |
+| **Cloud DLP** | Would use for enterprise HIPAA/FERPA. Our regex guardrails are the demo-grade equivalent. |
+
+### Key Commands to Know
+
+```bash
+# Run locally
+source .venv/bin/activate && python main.py
+
+# Deploy to Cloud Run
+gcloud run deploy multi-agentic-rag --source . --region us-central1 --project multi-agent-support-gcp
+
+# Check deployment status
+gcloud run services describe multi-agentic-rag --project multi-agent-support-gcp --region us-central1
+
+# View logs
+gcloud run logs read --service multi-agentic-rag --project multi-agent-support-gcp --region us-central1
+
+# Query BigQuery analytics
+bq query --project_id=multi-agent-support-gcp 'SELECT * FROM support_analytics.interactions ORDER BY timestamp DESC LIMIT 10'
 ```
 
 ---

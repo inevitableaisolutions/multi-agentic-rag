@@ -67,7 +67,7 @@ async def startup():
 
     # Initialize semantic cache
     from customer_support_agent.cache.semantic_cache import SemanticCache
-    semantic_cache = SemanticCache(similarity_threshold=0.92, ttl_seconds=3600)
+    semantic_cache = SemanticCache(similarity_threshold=0.70, ttl_seconds=3600)
     print(f"[startup] Semantic cache ready")
 
     print(f"[startup] All systems go! Total startup: {time.time()-start:.1f}s")
@@ -96,12 +96,15 @@ async def process_query(request: QueryRequest):
         guardrails_result = run_guardrails(query)
 
         if not guardrails_result["is_safe"]:
+            details = guardrails_result.get("details", {})
             return {
                 "blocked": True,
                 "blocked_reason": guardrails_result["blocked_reason"],
                 "guardrails": {
                     "is_safe": False,
                     "pii_detected": guardrails_result["pii_detected"],
+                    "injection_blocked": not details.get("injection", {}).get("is_safe", True),
+                    "topic_blocked": not details.get("topic", {}).get("is_on_topic", True),
                 },
                 "response": None,
                 "classification": None,
@@ -125,6 +128,8 @@ async def process_query(request: QueryRequest):
                 "guardrails": {
                     "is_safe": True,
                     "pii_detected": guardrails_result["pii_detected"],
+                    "injection_blocked": False,
+                    "topic_blocked": False,
                 },
                 "response": cache_result["cached_response"],
                 "classification": cache_result.get("metadata", {}).get("classification"),

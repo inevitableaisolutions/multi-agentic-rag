@@ -145,13 +145,27 @@ function setVal(id, text, cls) {
 }
 
 function updatePipeline(data) {
-    // Guardrails
+    // Guardrails — show specific check results
     if (data.guardrails) {
         const gr = data.guardrails;
         setStageStatus('guardrails', gr.is_safe ? 'complete' : 'blocked');
+
+        // PII: show what was found
         setVal('gr-pii', gr.pii_detected?.length ? `Redacted: ${gr.pii_detected.join(', ')}` : 'Clean', gr.pii_detected?.length ? 'warn' : 'good');
-        setVal('gr-injection', gr.is_safe ? 'Safe' : 'Blocked', gr.is_safe ? 'good' : 'bad');
-        setVal('gr-topic', gr.is_safe ? 'On-topic' : 'Off-topic', gr.is_safe ? 'good' : 'bad');
+
+        // Injection: show if this specific check blocked
+        if (gr.injection_blocked) {
+            setVal('gr-injection', 'BLOCKED', 'bad');
+        } else {
+            setVal('gr-injection', 'Safe', 'good');
+        }
+
+        // Topic: show if this specific check blocked
+        if (gr.topic_blocked) {
+            setVal('gr-topic', 'OFF-TOPIC', 'bad');
+        } else {
+            setVal('gr-topic', 'On-topic', 'good');
+        }
     }
 
     if (data.blocked) {
