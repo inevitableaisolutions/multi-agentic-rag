@@ -554,20 +554,20 @@ body {
     bottom: 80px;
     right: 16px;
     z-index: 100;
-    width: 48px;
-    height: 48px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
-    background: var(--accent);
+    background: #1a1a2e;
     color: #fff;
-    border: none;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, .4);
+    border: 2px solid #4dabf7;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .5);
     cursor: pointer;
     align-items: center;
     justify-content: center;
     transition: transform .2s;
 }
 .mobile-pipeline-toggle:active { transform: scale(.9); }
-.mobile-pipeline-toggle svg { width: 20px; height: 20px; }
+.mobile-pipeline-toggle svg { width: 22px; height: 22px; stroke: #4dabf7; }
 
 /* ─── Responsive: Tablet ───────────────────────────────── */
 @media (max-width: 1024px) {
