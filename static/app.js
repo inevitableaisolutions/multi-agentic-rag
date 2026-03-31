@@ -229,3 +229,11 @@ function updateMetrics(data) {
     if (data.evaluation?.decision?.toLowerCase() === 'approve') approvedCount++;
     document.getElementById('metric-approved').textContent = queryCount > 0 ? Math.round(approvedCount / queryCount * 100) + '%' : '--';
 }
+
+// ─── Mobile Pipeline Toggle ─────────────────────────────
+function togglePipeline() {
+    const panel = document.querySelector('.pipeline-panel');
+    const overlay = document.getElementById('mobileOverlay');
+    panel.classList.toggle('open');
+    overlay.classList.toggle('open');
+}
